@@ -24,5 +24,7 @@ public class MainActivity extends AppCompatActivity {
         bundle.putInt("value",i);
         intent.putExtras(bundle);
         startActivity(intent);
+
+
     }
 }
