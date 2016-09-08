@@ -100,7 +100,6 @@ public class ListeningToWhistleService extends Service {
                 Log.d("LOGGER", "heard a clap!");
                 clapDetected = true;
                 i++;
-
                 sendMessage(i);
 
             }
