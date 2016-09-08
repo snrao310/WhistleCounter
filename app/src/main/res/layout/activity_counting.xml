@@ -18,7 +18,7 @@
         android:textSize="250sp"
         android:text="0"
         android:textColor="@color/WHITE"
-        android:id="@+id/number"
+        android:id="@+id/numberCount"
         />
 
 </LinearLayout>

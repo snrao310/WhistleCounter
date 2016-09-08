@@ -15,11 +15,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        editText= (EditText)findViewById(R.id.numberOfWhistles);
+        editText= (EditText) findViewById(R.id.numberOfWhistles);
     }
 
 
-    public void startButton(View view){
+    public void start(View view){
         Intent intent=new Intent(MainActivity.this,CountingActivity.class);
         int i=Integer.parseInt(editText.getText().toString());
         Bundle bundle=new Bundle();

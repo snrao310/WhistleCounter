@@ -2,54 +2,75 @@ package com.whistlecounter.snrao.whistlecounter;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.media.MediaRecorder;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
-import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.musicg.wave.Wave;
 
 import java.io.IOException;
 
 public class ListeningToWhistleService extends Service {
 
+    private final IBinder mIBinder = new LocalBinder();
+    private Handler mHandler = null;
     MediaRecorder mRecorder;
-    private Messenger messageHandler;
-    Intent intent;
+
+    public class LocalBinder extends Binder
+    {
+        public ListeningToWhistleService getInstance()
+        {
+            return ListeningToWhistleService.this;
+        }
+    }
+
+    public void setHandler(Handler handler)
+    {
+        Toast.makeText(ListeningToWhistleService.this, "In Handler", Toast.LENGTH_SHORT).show();
+        mHandler = handler;
+        //sendMessageToMainActivity();
+    }
+
+    public void sendMessage(int i) {
+        //Toast.makeText(serviceEx.this, "In Message", Toast.LENGTH_SHORT).show();
+
+            if (mHandler != null) {
+                Message msg = mHandler.obtainMessage();
+                Bundle b = new Bundle();
+                b.putInt("message", i);
+                msg.setData(b);
+                mHandler.sendMessage(msg);
+        }
+
+    }
 
     public ListeningToWhistleService() {
-
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        return mIBinder;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        this.intent=intent;
-        startRecording();
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    public void startRecording() {
-        super.onCreate();
         String mFileName;
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
         mFileName += "/whistleSound.3gp";
 
         mRecorder = new MediaRecorder();
-        if(checkPermission("android.permission.RECORD_AUDIO",1,0)== PackageManager.PERMISSION_GRANTED) {
-            mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mRecorder.setOutputFile(mFileName);
-            mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        }
+        mRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        mRecorder.setOutputFile(mFileName);
+        mRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
             mRecorder.prepare();
@@ -80,8 +101,6 @@ public class ListeningToWhistleService extends Service {
                 clapDetected = true;
                 i++;
 
-                Bundle extras = intent.getExtras();
-                messageHandler = (Messenger) extras.get("MESSENGER");
                 sendMessage(i);
 
             }
@@ -89,11 +108,16 @@ public class ListeningToWhistleService extends Service {
                     + ampDifference);
         } while (i < 5);
 
-        
+
 
         Log.d("LOGGER", "stopped recording");
         done();
-        stopSelf();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
     }
 
 
@@ -117,18 +141,6 @@ public class ListeningToWhistleService extends Service {
         } catch (InterruptedException e)
         {
             Log.d("LOGGER", "interrupted");
-        }
-    }
-
-
-    public void sendMessage(int i) {
-        Message message = Message.obtain();
-        message.arg1=i;
-
-        try {
-            messageHandler.send(message);
-        } catch (RemoteException e) {
-            e.printStackTrace();
         }
     }
 
