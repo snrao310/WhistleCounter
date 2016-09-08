@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void start(View view){
+    public void startButton(View view){
         Intent intent=new Intent(MainActivity.this,CountingActivity.class);
         int i=Integer.parseInt(editText.getText().toString());
         Bundle bundle=new Bundle();

@@ -13,7 +13,7 @@ import android.os.Messenger;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.musicg.wave.Wave;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
@@ -22,6 +22,8 @@ public class ListeningToWhistleService extends Service {
     private final IBinder mIBinder = new LocalBinder();
     private Handler mHandler = null;
     MediaRecorder mRecorder;
+    EventBus eventBus;
+    WhistleEvent whistleEvent;
 
     public class LocalBinder extends Binder
     {
@@ -36,19 +38,6 @@ public class ListeningToWhistleService extends Service {
         Toast.makeText(ListeningToWhistleService.this, "In Handler", Toast.LENGTH_SHORT).show();
         mHandler = handler;
         //sendMessageToMainActivity();
-    }
-
-    public void sendMessage(int i) {
-        //Toast.makeText(serviceEx.this, "In Message", Toast.LENGTH_SHORT).show();
-
-            if (mHandler != null) {
-                Message msg = mHandler.obtainMessage();
-                Bundle b = new Bundle();
-                b.putInt("message", i);
-                msg.setData(b);
-                mHandler.sendMessage(msg);
-        }
-
     }
 
     public ListeningToWhistleService() {
@@ -100,7 +89,7 @@ public class ListeningToWhistleService extends Service {
                 Log.d("LOGGER", "heard a clap!");
                 clapDetected = true;
                 i++;
-                sendMessage(i);
+                eventBus.post(whistleEvent);
 
             }
             Log.d("LOGGER", "finishing amplitude: " + finishAmplitude + " diff: "

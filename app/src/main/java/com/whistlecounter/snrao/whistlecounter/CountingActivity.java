@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
+import android.support.annotation.IntegerRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,6 +35,8 @@ public class CountingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counting);
+        EventBus eventBus=new EventBus();
+        eventBus.register(this);
 
 
         final Handler handler;
@@ -64,5 +70,13 @@ public class CountingActivity extends AppCompatActivity {
             }
         };
         bindService(serviceIntent,serve, Context.BIND_AUTO_CREATE);
+    }
+
+
+    @Subscribe
+    public void onEvent(WhistleEvent event){
+        TextView t=(TextView)findViewById(R.id.numberCount);
+        int i= Integer.parseInt(t.getText().toString());
+        t.setText(Integer.toString(i+1));
     }
 }
