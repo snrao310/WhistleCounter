@@ -31,5 +31,5 @@
         android:text="Start"
         android:id="@+id/button"
         android:layout_below="@+id/numberOfWhistles"
-        android:onClick="start"/>
+        android:onClick="startButton"/>
 </LinearLayout>
