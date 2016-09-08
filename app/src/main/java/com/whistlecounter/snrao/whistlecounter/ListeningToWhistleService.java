@@ -55,6 +55,7 @@ public class ListeningToWhistleService extends Service {
 
             boolean clapDetected = false;
             int i = 0;
+            int j=0;
 
             do {
                 Log.d("Logger", "waiting while recording...");
@@ -66,18 +67,23 @@ public class ListeningToWhistleService extends Service {
 //            }
 
                 int ampDifference = finishAmplitude - startAmplitude;
-                if (ampDifference >= 25000) {
+                if (ampDifference >= 10000) {
                     Log.d("LOGGER", "heard a clap!");
                     clapDetected = true;
                     i++;
-                    sendBroadcast(new Intent("Increment"));
 
+
+                }
+                if(ampDifference<10000){
+                    if(i>=3){
+                        sendBroadcast(new Intent("Increment"));
+                        j++;
+                    }
+                    i=0;
                 }
                 Log.d("LOGGER", "finishing amplitude: " + finishAmplitude + " diff: "
                         + ampDifference);
-            } while (i < 5);
-
-
+            } while (j < 3);
 
             Log.d("LOGGER", "stopped recording");
             done();
