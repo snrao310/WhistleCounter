@@ -1,8 +1,10 @@
 package com.whistlecounter.snrao.whistlecounter;
 
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -29,6 +31,7 @@ public class CountingActivity extends AppCompatActivity {
 
     int aResponse;
     ListeningToWhistleService mService;
+    private DataUpdateReceiver dataUpdateReceiver;
 
 
     @Override
@@ -77,5 +80,32 @@ public class CountingActivity extends AppCompatActivity {
         TextView t=(TextView)findViewById(R.id.numberCount);
         int i= Integer.parseInt(t.getText().toString());
         t.setText(Integer.toString(i+1));
+    }
+
+    private class DataUpdateReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("Increment")) {
+                TextView t=(TextView)findViewById(R.id.numberCount);
+                int i= Integer.parseInt(t.getText().toString());
+                t.setText(Integer.toString(i+1));
+            }
+        }
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (dataUpdateReceiver == null) dataUpdateReceiver = new DataUpdateReceiver();
+        IntentFilter intentFilter = new IntentFilter("Increment");
+        registerReceiver(dataUpdateReceiver, intentFilter);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (dataUpdateReceiver != null) unregisterReceiver(dataUpdateReceiver);
     }
 }
