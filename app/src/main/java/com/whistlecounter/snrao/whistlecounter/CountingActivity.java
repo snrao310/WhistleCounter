@@ -35,8 +35,7 @@ public class CountingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_counting);
-        EventBus eventBus=new EventBus();
-        eventBus.register(this);
+        EventBus.getDefault().register(this);
 
 
         final Handler handler;

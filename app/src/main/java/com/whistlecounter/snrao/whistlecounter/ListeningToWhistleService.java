@@ -22,8 +22,7 @@ public class ListeningToWhistleService extends Service {
     private final IBinder mIBinder = new LocalBinder();
     private Handler mHandler = null;
     MediaRecorder mRecorder;
-    EventBus eventBus;
-    WhistleEvent whistleEvent;
+    WhistleEvent whistleEvent=new WhistleEvent();
 
     public class LocalBinder extends Binder
     {
@@ -89,7 +88,7 @@ public class ListeningToWhistleService extends Service {
                 Log.d("LOGGER", "heard a clap!");
                 clapDetected = true;
                 i++;
-                eventBus.post(whistleEvent);
+                EventBus.getDefault().post(whistleEvent);
 
             }
             Log.d("LOGGER", "finishing amplitude: " + finishAmplitude + " diff: "
